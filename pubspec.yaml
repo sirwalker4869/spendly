@@ -36,6 +36,8 @@ dependencies:
   file_picker: ^8.0.0
   path_provider: ^2.1.2
   share_plus: ^9.0.0
+  notification_listener_service: 1.0.0 # Package untuk baca notifikasi (Android)
+
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

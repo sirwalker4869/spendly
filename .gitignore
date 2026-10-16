@@ -47,14 +47,6 @@ app.*.map.json
 
 
 
-# Dependencies dan hasil build Flutter
-.dart_tool/
-.packages
-build/
-
-# Android
-# android/.gradle/
-android/app/build/
 
 # iOS
 ios/Pods/

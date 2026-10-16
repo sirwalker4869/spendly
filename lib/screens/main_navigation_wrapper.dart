@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/transaction_model.dart';
+import '../services/notification_service.dart'; // 📦 Import Service Notifikasi Listener
 import 'dashboard_screen.dart';
 import 'riwayat_screen.dart';
 import 'add_transaction_screen.dart';
@@ -24,6 +25,23 @@ class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
   void initState() {
     super.initState();
     _loadTransactionsFromStorage();
+
+    // 🚀 AKTIFKAN LISTENER NOTIFIKASI OTOMATIS SAAT APLIKASI DI-START
+    NotificationServiceTracker.initializeListener((newTransaction) {
+      setState(() {
+        _transactions.insert(0, newTransaction); // Masuk ke urutan teratas
+      });
+      _saveTransactionsToStorage(); // Simpan permanen ke SharedPreferences
+
+      // Tampilkan feedback notifikasi di dalam aplikasi
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Auto-catat: ${newTransaction.title} (Rp ${newTransaction.amount.toInt()})'),
+          backgroundColor: const Color(0xFF10B981),
+          duration: const Duration(seconds: 4),
+        ),
+      );
+    });
   }
 
   // 📥 LOAD DATA DARI STORAGE HP
@@ -104,7 +122,7 @@ class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
     _saveTransactionsToStorage();
   }
 
-  // 📥 HANDLER SAAT DATA BERHASIL DI-IMPORT (DITARUH DI SINI)
+  // 📥 HANDLER SAAT DATA BERHASIL DI-IMPORT
   void _handleImportSuccess(List<Transaction> newTransactions) {
     setState(() {
       _transactions = newTransactions;
@@ -116,7 +134,7 @@ class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
   Widget build(BuildContext context) {
     if (_isLoading) {
       return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
+        body: Center(child: CircularProgressIndicator(color: Color(0xFF10B981))),
       );
     }
 
@@ -135,7 +153,7 @@ class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
       LaporanScreen(transactions: _transactions),
       AkunScreen(
         transactions: _transactions,
-        onImportSuccess: _handleImportSuccess, // Dipanggil di sini
+        onImportSuccess: _handleImportSuccess,
       ),
     ];
 
